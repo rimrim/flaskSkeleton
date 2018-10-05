@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  authn:
+    volumes:
+      - .:/app
+    environment:
+      DEBUG: 'true'
+      DATABASE_URL: 'postgresql://testuser:testpassword@db:5432/testdb'
+
+  db:
+    environment:
+      POSTGRES_USER: "testuser"
+      POSTGRES_PASSWORD: "testpassword"
+      POSTGRES_DB: "testdb"
+

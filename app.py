@@ -20,6 +20,9 @@ api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(StoreList, '/stores')
 
+@app.route('/')
+def hello_world():
+  return 'hello world from docker-compose'
 
 if __name__ == '__main__':
     from db import db
@@ -31,4 +34,4 @@ if __name__ == '__main__':
         def create_tables():
             db.create_all()
 
-    app.run(port=5000)
+    app.run(host='0.0.0.0', port=5000)
