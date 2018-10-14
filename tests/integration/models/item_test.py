@@ -19,3 +19,11 @@ class ItemTest(BaseTest):
             item.delete_from_db()
 
             self.assertIsNone(ItemModel.find_by_name('test'))
+
+    def test_item_store_relationship(self):
+        with self.app_context():
+            store = StoreModel('testStore')
+            item = ItemModel('test', 19.99, 1)
+            store.save_to_db()
+            item.save_to_db()
+            self.assertEqual('testStore', item.store.name)
