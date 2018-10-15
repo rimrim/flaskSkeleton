@@ -16,7 +16,7 @@ class ItemTest(BaseTest):
                                         data=json.dumps({'username':'test','password':'password'}),
                                         headers={'Content-Type':'application/json'})
                 auth_token = json.loads(auth_resp.data)['access_token']
-                self.access_token = f'JWT {auth_token}'
+                self.access_token = f'Bearer {auth_token}'
 
 
     def test_get_item_not_auth(self):
