@@ -32,3 +32,16 @@ class UserTest(BaseTest):
                                            data=json.dumps({'username':'user','password':'1234'}),
                                            headers={'Content-Type': 'application/json'})
                 self.assertIn('access_token', json.loads(auth_response.data).keys())
+
+    def test_get_user(self):
+        with self.app() as client:
+            with self.app_context():
+                response = client.get('/user/1')
+                self.assertEqual(response.status_code, 404)
+                UserModel('test','test').save_to_db()
+                response = client.get('/user/1')
+                self.assertEqual(response.status_code, 200)
+                response = client.delete('/user/1')
+                self.assertEqual(response.status_code, 200)
+                response = client.get('/user/1')
+                self.assertEqual(response.status_code, 404)

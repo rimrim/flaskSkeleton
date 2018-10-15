@@ -20,9 +20,12 @@ class ItemTest(BaseTest):
         with self.app_context():
             StoreModel('test').save_to_db()
             item = ItemModel('test', 19.99, 1)
+            item.save_to_db()
             expected = {
+                'id': 1,
                 'name': 'test',
-                'price': 19.99
+                'price': 19.99,
+                'store': 1
             }
 
             self.assertEqual(

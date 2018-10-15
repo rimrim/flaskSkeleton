@@ -23,7 +23,7 @@ class ItemTest(BaseTest):
         with self.app() as client:
             with self.app_context():
                 resp = client.get('/item/test')
-                self.assertEqual(resp.status_code, 500)
+                self.assertEqual(resp.status_code, 401)
 
     def test_get_item_not_found(self):
         with self.app() as client:

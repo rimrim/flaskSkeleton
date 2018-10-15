@@ -11,3 +11,7 @@ class UserTest(BaseTest):
             user.save_to_db()
             self.assertIsNotNone(UserModel.find_by_id(1))
             self.assertIsNotNone(UserModel.find_by_username('user'))
+
+    def test_json(self):
+        user = UserModel('user', 'password')
+        self.assertEquals('user', user.json()['username'])

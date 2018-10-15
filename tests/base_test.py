@@ -15,7 +15,6 @@ class BaseTest(TestCase):
     @classmethod
     def setUpClass(cls):
         app.config['DEBUG'] = False
-        app.config['PROPAGATE_EXCEPTION'] = True
         with app.app_context():
             db.init_app(app)
 

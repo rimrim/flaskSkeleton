@@ -8,7 +8,7 @@ from security import authenticate, identity
 
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from resources.user import UserRegister
+from resources.user import UserRegister, User
 
 app = Flask(__name__)
 
@@ -16,6 +16,8 @@ app.config['DEBUG'] = True
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# this help flask app see exceptions from flask-jwt
+app.config['PROPAGATE_EXCEPTIONS'] = True
 # this secret key is used to encode cookies
 app.secret_key = 'some secret'
 api = Api(app)
@@ -27,6 +29,7 @@ api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
+api.add_resource(User, '/user/<int:user_id>')
 
 @app.errorhandler(JWTError)
 def auth_error_handler(err):

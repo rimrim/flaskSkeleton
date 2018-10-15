@@ -33,11 +33,14 @@ class StoreTest(BaseTest):
             store.save_to_db()
             item.save_to_db()
             expected = {
+                'id': 1,
                 'name':'test',
                 'items': [
                     {
+                        'id':1,
                         'name':'testItem',
-                        'price':19
+                        'price':19,
+                        'store':1
                     }
                 ]
             }
