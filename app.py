@@ -28,9 +28,9 @@ api.add_resource(ItemList, '/items')
 api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
 
-@app.error_handler(JWTError):
+@app.errorhandler(JWTError)
 def auth_error_handler(err):
-    return jsonify({'message':'cannot authenticate, jwt invalid'})
+    return jsonify({'message':'cannot authenticate, jwt invalid'}), 401
 
 @app.route('/')
 def hello_world():
