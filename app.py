@@ -4,11 +4,10 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 # from security import authenticate, identity
-
-
+from blacklist import BLACKLIST
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from resources.user import UserRegister, User, UserLogin
+from resources.user import UserRegister, User, UserLogin, UserLogout
 
 app = Flask(__name__)
 
@@ -20,9 +19,39 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 # this secret key is used to encode cookies, jwt
 app.secret_key = 'some secret'
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 api = Api(app)
 
 jwt = JWTManager(app)
+
+@jwt.user_claims_loader
+def add_admin_claims(identity):
+    if identity == 1:
+        return {'is_admin': True}
+    return {'is_admin': False}
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_black_list(decoded_token):
+    return decoded_token['jti'] in BLACKLIST
+
+@jwt.expired_token_loader
+def token_expired():
+    return jsonify({
+        'message':'token expired'
+    }), 401
+
+@jwt.invalid_token_loader
+def token_invalid():
+    return jsonify({
+        'message': 'token invalid'
+    }), 401
+
+@jwt.revoked_token_loader
+def token_blacklisted():
+    return jsonify({
+        'message': 'token revoked'
+    }), 401
 
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(Item, '/item/<string:name>')
@@ -31,6 +60,7 @@ api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/auth')
+api.add_resource(UserLogout, '/logout')
 
 # @app.errorhandler(JWTError)
 # def auth_error_handler(err):

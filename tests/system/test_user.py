@@ -1,5 +1,7 @@
 import json
 
+from models.item import ItemModel
+from models.store import StoreModel
 from models.user import UserModel
 from tests.base_test import BaseTest
 
@@ -65,4 +67,26 @@ class UserTest(BaseTest):
                                    headers={'Content-Type': 'application/json'})
                 self.assertNotIn('access_token', json.loads(resp.data).keys())
                 self.assertNotIn('refresh_token', json.loads(resp.data).keys())
+                self.assertEqual(resp.status_code, 401)
+
+    def test_user_logout(self):
+        with self.app() as client:
+            with self.app_context():
+                # login
+                UserModel('test2', 'test2').save_to_db()
+                auth_resp = client.post('/auth',
+                                        data=json.dumps({'username':'test2','password':'test2'}),
+                                        headers={'Content-Type':'application/json'})
+                auth_token = json.loads(auth_resp.data)['access_token']
+                self.access_token = f'Bearer {auth_token}'
+                StoreModel('store').save_to_db()
+                ItemModel('test', 19, 1).save_to_db()
+                resp = client.get('/item/test',
+                                     headers={'Authorization': self.access_token})
+                self.assertEqual(resp.status_code, 200)
+                logout_resp = client.post('/logout',
+                                   headers={'Authorization': self.access_token})
+                self.assertEqual(logout_resp.status_code, 200)
+                resp = client.get('/item/test',
+                                  headers={'Authorization': self.access_token})
                 self.assertEqual(resp.status_code, 401)
