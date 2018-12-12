@@ -3,7 +3,6 @@ import os
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-# from security import authenticate, identity
 from blacklist import BLACKLIST
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
@@ -25,11 +24,6 @@ api = Api(app)
 
 jwt = JWTManager(app)
 
-@jwt.user_claims_loader
-def add_admin_claims(identity):
-    if identity == 1:
-        return {'is_admin': True}
-    return {'is_admin': False}
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_black_list(decoded_token):
@@ -52,6 +46,12 @@ def token_blacklisted():
     return jsonify({
         'message': 'token revoked'
     }), 401
+
+@jwt.user_claims_loader
+def add_admin_claims(identity):
+    if identity == 1:
+        return {'is_admin': True}
+    return {'is_admin': False}
 
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(Item, '/item/<string:name>')

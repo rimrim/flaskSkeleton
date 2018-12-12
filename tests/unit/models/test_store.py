@@ -6,3 +6,4 @@ class StoreTest(BaseTest):
     def test_create_store(self):
         store = StoreModel('test')
         self.assertEqual(store.name, 'test')
+
